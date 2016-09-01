@@ -1,10 +1,15 @@
-FROM ubuntu:14.04
+FROM debian:jessie
 
-RUN apt-get update && apt-get install --no-install-recommends -y xz-utils curl libpq-dev libgmp3-dev && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+ENV POSTGREST_VERSION 0.3.2.0
 
-RUN curl -L --insecure https://github.com/begriffs/postgrest/releases/download/v0.3.1.0/postgrest-0.3.1.0-ubuntu.tar.xz \
-    | tar -xJO > /usr/local/bin/postgrest \ 
-    && chmod u+x /usr/local/bin/postgrest 
+RUN apt-get update && \
+    apt-get install -y tar xz-utils wget libpq-dev && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN wget http://github.com/begriffs/postgrest/releases/download/v${POSTGREST_VERSION}/postgrest-${POSTGREST_VERSION}-ubuntu.tar.xz && \
+    tar --xz -xvf postgrest-${POSTGREST_VERSION}-ubuntu.tar.xz && \
+    mv postgrest /usr/local/bin/postgrest && \
+    rm postgrest-${POSTGREST_VERSION}-ubuntu.tar.xz
 
 EXPOSE 3000
 
